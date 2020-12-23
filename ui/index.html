@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html><head><title>Jigsaw Puzzle Tracker</title>
+</head>
+<body onload="callapi('nop');">
+
+<script>
+var lastupdate = Date.now();
+
+function callapi(funcName) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      data = JSON.parse(this.responseText);
+      lastupdate = Date.now();
+      document.getElementById("count").innerHTML = data.count;
+      document.getElementById("rate").innerHTML = data.rate + " pieces/hour";
+      document.getElementById("time").innerHTML = "...";
+    }
+  };
+  xhttp.open("GET", "/" + funcName, true);
+  xhttp.send();
+}
+
+var interval = 100;
+var expected = Date.now() + interval;
+function step() {
+    var elapsed = (Date.now() - lastupdate);
+    document.getElementById("time").innerHTML = 'Last update: ' + new Date(elapsed).toISOString().substr(11, 8)
+    var dt = Date.now() - expected; 
+    expected += interval;
+    setTimeout(step, Math.max(0, interval - dt)); // adjust for drift
+}
+
+setTimeout(step, interval);
+
+</script>
+
+<style>
+
+html, body {
+    background-color: black;
+    height: 100%;
+    padding: 0 0;
+    margin: 0 0;
+}
+
+button {
+  display: block;
+  width: 100%;
+  border: none;
+  background-color: #444;
+  cursor: pointer;
+  text-align: center;
+  font-size: 20px;
+  letter-spacing: 4px;
+  position: relative;
+  color: #fff;
+  padding: 20px;
+  overflow: hidden;
+  transition: all 0.6s
+}
+button:active {
+  background-color: #fff;
+  transition: all 0s
+}
+
+.info {
+  background-color: #000;
+  width:100%;
+  color:white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.count {
+  height:15%;
+  font-size: 100px;
+}
+.rate {
+  height:10%;
+  font-size: 40px;
+  color:lightgrey;
+}
+.time {
+  height:5%;
+  font-size: 24px;
+  color:grey;
+}
+</style>
+
+<button type="button" style="height: 55%; font-size: 200px;" onclick="callapi('inc')">+</button>
+<div id="count" class="info count">...</div>
+<div id="rate" class="info rate">...</div>
+<div id="time" class="info time">...</div>
+<button type="button" style="height: 15%; font-size: 80px;" onclick="callapi('dec')">-</button>
+</body>
+</html>
