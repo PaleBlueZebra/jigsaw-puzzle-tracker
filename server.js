@@ -181,7 +181,8 @@ async function updateChart(rate) {
       gridlines: { color: '` + cfg.chartGridColor + `'},
       minorGridlines: { color: '` + cfg.chartGridColor + `'},
       baselineColor: '` + cfg.chartGridColor + `',
-      minValue: 0,
+      viewWindow: { min: '0', max: 'auto' },
+      viewWindowMode: 'explicit',
       textStyle: { color: '` + cfg.chartTextColor + `'}  
     }
   };
